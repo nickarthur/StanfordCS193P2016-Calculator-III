@@ -11,9 +11,7 @@ import UIKit
 class GraphView: UIView
 {
 	@IBInspectable var scale: CGFloat = 100 { didSet { setNeedsDisplay() }}
-	@IBInspectable var origin: CGPoint! {
-		didSet { if oldValue != nil { setNeedsDisplay() } }
-	}
+	@IBInspectable var origin: CGPoint! { didSet { setNeedsDisplay() }}
 	@IBInspectable var color: UIColor = UIColor.blueColor() { didSet { setNeedsDisplay() }}
 	@IBInspectable var axesColor: UIColor = UIColor.blackColor() { didSet { setNeedsDisplay() }}
 	@IBInspectable var lineWidth: CGFloat = 2.0 { didSet { setNeedsDisplay() }}
@@ -22,12 +20,7 @@ class GraphView: UIView
 	
 	// set when bounds change (ie rotation), 
 	// to maintain relative origin
-	var boundsBeforeTransitionToSize: CGRect = CGRectZero {
-		didSet {
-			origin?.x = origin!.x * bounds.width / boundsBeforeTransitionToSize.width
-			origin?.y = origin!.y * bounds.height / boundsBeforeTransitionToSize.height
-		}
-	}
+	var boundsBeforeTransitionToSize: CGRect?
 	
 	func zoom(recognizer: UIPinchGestureRecognizer) {
 		switch recognizer.state {
@@ -72,6 +65,10 @@ class GraphView: UIView
 		if origin == nil {
 			origin = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
 			storeData()
+		} else if boundsBeforeTransitionToSize != nil { // interface rotation
+			origin.x = origin.x * bounds.width / boundsBeforeTransitionToSize!.width
+			origin.y = origin.y * bounds.height / boundsBeforeTransitionToSize!.height
+			boundsBeforeTransitionToSize = nil
 		}
 		if axesDrawer == nil {
 			axesDrawer = AxesDrawer(color: axesColor, contentScaleFactor: contentScaleFactor)

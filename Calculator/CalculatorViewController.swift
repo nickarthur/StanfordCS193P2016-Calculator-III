@@ -13,6 +13,12 @@ class CalculatorViewController: UIViewController
 // all methods and properties are private, except for
 // except for UIViewController methodds (override)
 	
+	@IBOutlet private weak var decimalPointButton: UIButton! {
+		didSet {
+			let title = numberFormatter.decimalSeparator
+			decimalPointButton.setTitle(title, forState: .Normal)
+		}
+	}
 	@IBOutlet private weak var display: UILabel!
 	@IBOutlet private weak var descriptionDisplay: UILabel!
 	
@@ -119,10 +125,14 @@ class CalculatorViewController: UIViewController
 
 func thisAppStandardNumberFormatter () -> NSNumberFormatter {
 	let numberFormatter = NSNumberFormatter()
+	numberFormatter.locale = NSLocale.currentLocale()
+	numberFormatter.numberStyle = .DecimalStyle
+	numberFormatter.notANumberSymbol = "Error..(NaN)"
 	numberFormatter.alwaysShowsDecimalSeparator = false
 	numberFormatter.maximumFractionDigits = 6
 	numberFormatter.minimumFractionDigits = 0
 	numberFormatter.minimumIntegerDigits = 1
 	return numberFormatter
 }
+
 

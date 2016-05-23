@@ -427,6 +427,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="decimalPointButton" destination="Q0j-hO-OzD" id="MXb-yP-wBd"/>
                         <outlet property="descriptionDisplay" destination="1ol-Fz-ZFM" id="t6n-TJ-LeE"/>
                         <outlet property="display" destination="OL6-3S-12L" id="H3p-qF-PpY"/>
                         <outlet property="graphButton" destination="AOI-Lp-6Dq" id="hSq-Eb-kwM"/>
