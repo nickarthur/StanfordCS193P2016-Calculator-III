@@ -15,8 +15,8 @@ class CalculatorViewController: UIViewController
 	
 	@IBOutlet private weak var decimalPointButton: UIButton! {
 		didSet {
-			let title = numberFormatter.decimalSeparator
-			decimalPointButton.setTitle(title, forState: .Normal)
+			decimalPointButton.setTitle(numberFormatter.decimalSeparator,
+			                            forState: .Normal)
 		}
 	}
 	@IBOutlet private weak var display: UILabel!

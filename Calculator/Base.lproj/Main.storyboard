@@ -182,7 +182,7 @@
                                                 <rect key="frame" x="401" y="0.0" width="100" height="76"/>
                                                 <color key="backgroundColor" red="0.7019608021" green="0.7019608021" blue="0.7019608021" alpha="1" colorSpace="calibratedRGB"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                                <state key="normal" title="Rand"/>
+                                                <state key="normal" title="Ran"/>
                                                 <connections>
                                                     <action selector="performOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zBr-82-Hdc"/>
                                                 </connections>
@@ -419,7 +419,7 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" id="oiM-OZ-hBv">
-                        <barButtonItem key="rightBarButtonItem" image="graph@22" style="plain" id="AOI-Lp-6Dq">
+                        <barButtonItem key="rightBarButtonItem" image="graph@22" id="AOI-Lp-6Dq">
                             <color key="tintColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <segue destination="quN-Ne-zSo" kind="showDetail" identifier="toGraph" id="6V8-WY-YdS"/>
