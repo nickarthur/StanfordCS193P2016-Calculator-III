@@ -1,8 +1,8 @@
 # StanfordCS193P2016-Calculator
 
-This is my  first assignment for Stanford CS193P (2016).
+This is my  third assignment for Stanford CS193P (2016).
 
-Assignment I: Calculator. 
+Assignment III: Calculator. 
 
 Various links...
 My youtube channel...
