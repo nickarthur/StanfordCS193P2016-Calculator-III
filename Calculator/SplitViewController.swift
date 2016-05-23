@@ -9,7 +9,9 @@
 import UIKit
 
 class SplitViewController: UISplitViewController, UISplitViewControllerDelegate
-{
+{	// This delegate methods is used to make "CalculatorViewController"
+	// the initial viewcontroller. 
+	
 	private var collapseDetailViewController = true
 	
 	override func viewDidLoad() {

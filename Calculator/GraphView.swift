@@ -18,11 +18,16 @@ class GraphView: UIView
 	@IBInspectable var axesColor: UIColor = UIColor.blackColor() { didSet { setNeedsDisplay() }}
 	@IBInspectable var lineWidth: CGFloat = 2.0 { didSet { setNeedsDisplay() }}
 	
-	// to lower the load, and increase performance when using 
-	// gesture recognizing (ie panning, zooming ... ) -> boolean var 'gesturing'
-	@IBInspectable var gesturesContentScaleFactor: CGFloat = 0.5
 	weak var dataSource: GraphViewDataSource?
-	var boundsBeforeTransitionToSize: CGRect?
+	
+	// set when bounds change (ie rotation), 
+	// to maintain relative origin
+	var boundsBeforeTransitionToSize: CGRect = CGRectZero {
+		didSet {
+			origin?.x = origin!.x * bounds.width / boundsBeforeTransitionToSize.width
+			origin?.y = origin!.y * bounds.height / boundsBeforeTransitionToSize.height
+		}
+	}
 	
 	func zoom(recognizer: UIPinchGestureRecognizer) {
 		switch recognizer.state {
@@ -34,6 +39,7 @@ class GraphView: UIView
 		case .Ended:
 			scale *= recognizer.scale
 			gesturing = false
+			storeData()
 		default: break
 		}
 	}
@@ -42,46 +48,62 @@ class GraphView: UIView
 		switch recognizer.state {
 		case .Began:
 			gesturing = true
-		case .Changed, .Ended:
+		case .Changed:
 			let translation = recognizer.translationInView(self)
 			origin.offsetBy(dx: translation.x, dy: translation.y)
 			recognizer.setTranslation(CGPointZero, inView: self)
-			if recognizer.state == .Ended {
-				gesturing = false
-			}
+		case .Ended:
+			let translation = recognizer.translationInView(self)
+			origin.offsetBy(dx: translation.x, dy: translation.y)
+			recognizer.setTranslation(CGPointZero, inView: self)
+			gesturing = false
+			storeData()
 		default: break
 		}
 	}
 	
 	func setOrigin(recognizer: UITapGestureRecognizer) {
 		origin = recognizer.locationInView(self)
+		storeData()
 	}
 	
-	private var gesturing: Bool = false
-	private var axesDrawer: AxesDrawer!
-
 	override internal func drawRect(rect: CGRect) {
 		super.drawRect(rect)
 		if origin == nil {
 			origin = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+			storeData()
 		}
-		else if let boundsBeforeTransition = boundsBeforeTransitionToSize {
-			origin.x = origin.x * bounds.width / boundsBeforeTransition.width
-			origin.y = origin.y * bounds.height / boundsBeforeTransition.height
-			boundsBeforeTransitionToSize = nil
-		}
-
 		if axesDrawer == nil {
 			axesDrawer = AxesDrawer(color: axesColor, contentScaleFactor: contentScaleFactor)
 		}
-		axesDrawer.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
+		axesDrawer!.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
 		if let fx = dataSource?.graphView {
 			drawMathFunction(fx)
 		}
 	}
 	
+	func storeData() {
+		let dataToSave = [scale, origin.x, origin.y]
+		userdefaults.setObject(dataToSave, forKey: Keys.ScaleAndOrigin)
+	}
+	
+	func restoreData() {
+		if let dataToRestore = userdefaults.arrayForKey(Keys.ScaleAndOrigin) as? [CGFloat]
+		{	if dataToRestore.count == 3 {
+			scale = dataToRestore[0]
+			origin = CGPoint(x: dataToRestore[1], y: dataToRestore[2])
+			}
+		}
+	}
+
+	///////////////////////////  private methods and properties
+	// for performance, use low contentScaleFactor when 'gesturing'
+	private var gesturingContentScaleFactor: CGFloat = 0.5
+	private var gesturing: Bool = false
+	private var axesDrawer: AxesDrawer?
+	
 	private func drawMathFunction(fx: (CGFloat) -> CGFloat)
-	{	let scaleFactor = !gesturing ? self.contentScaleFactor : gesturesContentScaleFactor
+	{	let scaleFactor = !gesturing ? self.contentScaleFactor : gesturingContentScaleFactor
 		
 		let maxY = bounds.maxY + bounds.height * 0.2
 		let minY = bounds.minY - bounds.height * 0.2
@@ -118,18 +140,9 @@ class GraphView: UIView
 		path?.stroke()
 	}
 
-	
-	deinit {
-		print("cleaned up all your mess?")
-	}
-	
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
+	private let userdefaults = NSUserDefaults.standardUserDefaults()
+	private struct Keys {
+		static let ScaleAndOrigin = "GraphViewScaleAndOrigin"
 	}
 	
 }

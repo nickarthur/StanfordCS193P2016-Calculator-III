@@ -8,21 +8,15 @@
 
 import UIKit
 
-//extension CalculatorViewController
-//{
-//	func resultForProgramUsing(valueForKeyM m: Double) -> Double {
-//		brain.variableValues["M"] = m
-//		return brain.result
-//	}
-//}
-
-
 class CalculatorViewController: UIViewController
 {
+// all methods and properties are private, except for
+// except for UIViewController methodds (override)
+	
 	@IBOutlet private weak var display: UILabel!
 	@IBOutlet private weak var descriptionDisplay: UILabel!
 	
-	@IBOutlet weak var graphButton: UIBarButtonItem!
+	@IBOutlet private weak var graphButton: UIBarButtonItem!
 	private var brain = CalculatorBrain()
 	private var userIsInTheMiddleOfTyping = false
 
@@ -85,6 +79,8 @@ class CalculatorViewController: UIViewController
 			descriptionDisplay.text = brain.description + postfixDescription
 			userIsInTheMiddleOfTyping = false
 			graphButton.enabled = !brain.isPartialResult
+			
+			userdefaults.setObject(brain.program, forKey: Keys.PropertyList)
 		}
 	}
 
@@ -93,36 +89,15 @@ class CalculatorViewController: UIViewController
 		displayValue = brain.result
 	}
 	
-	private var numberFormatter: NSNumberFormatter = thisAppStandardNumberFormatter()
-			
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		brain.numberFormatter = thisAppStandardNumberFormatter()
+		if let brainProgram = userdefaults.objectForKey(Keys.PropertyList) {
+			brain.program = brainProgram
+			displayValue = brain.result
+		}
 	}
 	
-//	override func viewWillAppear(animated: Bool) {
-//		calculatorState?.restore()
-//	}
-//	
-//	private var calculatorState: CalculatorState?
-//
-//	private struct CalculatorState {
-//		var brain: CalculatorBrain.PropertyList
-//		var variableValues: [String: Double]
-//		unowned var calculator: CalculatorBrain
-//		
-//		init(calculatorBrain: CalculatorBrain) {
-//			brain = calculatorBrain.program
-//			variableValues = calculatorBrain.variableValues
-//			self.calculator = calculatorBrain
-//		}
-//		
-//		func restore() {
-//			calculator.variableValues = variableValues
-//			calculator.program = brain
-//		}
-//	}
-
 	override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
 		return !brain.isPartialResult
 	}
@@ -132,6 +107,13 @@ class CalculatorViewController: UIViewController
 		if let hasCalculatorBrainVC = destinationVC as? hasCalculatorBrain {
 			hasCalculatorBrainVC.brainProgram = brain.program
 		}
+	}
+	
+	private var numberFormatter: NSNumberFormatter = thisAppStandardNumberFormatter()
+
+	private let userdefaults = NSUserDefaults.standardUserDefaults()
+	private struct Keys {
+		static let PropertyList = "CalculatorViewControllerPropertyList"
 	}
 }
 

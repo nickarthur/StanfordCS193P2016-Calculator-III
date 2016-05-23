@@ -16,28 +16,20 @@ protocol GraphViewDataSource: class {
 	func graphView(valueYforX x: CGFloat) -> CGFloat
 }
 
+
 class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSource
 {
-	var brainProgram: CalculatorBrain.PropertyList? {
-		didSet {
-			guard brain != nil && brainProgram != nil else { return }
-			brain.program = brainProgram!
+	weak var brainProgram: CalculatorBrain.PropertyList?
+	{	get {	return userdefaults.objectForKey(Keys.PropertyList) ?? []	}
+		set {
+			userdefaults.setObject(newValue, forKey: Keys.PropertyList)
+			brain.program = newValue ?? []
 		}
 	}
-	
+
 	func graphView(valueYforX x: CGFloat) -> CGFloat
 	{	brain.variableValues["M"] = Double(x)
 		return CGFloat(brain.result)
-	}
-	
-	private var brain: CalculatorBrain!
-	
-	@IBOutlet private weak var graphView: GraphView! {
-		didSet {
-			graphView.dataSource = self
-			graphView.scale = 100
-			setupGestureRecognizers()
-		}
 	}
 	
 	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
@@ -46,8 +38,6 @@ class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSo
 	
 	override func viewDidLoad()
 	{	super.viewDidLoad()
-		
-		brain = CalculatorBrain()
 		brain.numberFormatter = thisAppStandardNumberFormatter()
 		if brainProgram != nil {
 			brain.program = brainProgram!
@@ -56,6 +46,21 @@ class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSo
 		navigationItem.title = brainProgram != nil ? brain.description : "Graph of Calculator Function"
 		navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
 		navigationItem.leftItemsSupplementBackButton = true
+	}
+	
+	/////////////////////// - private methods and properties
+	private var brain = CalculatorBrain()
+	@IBOutlet private weak var graphView: GraphView! {
+		didSet {
+			graphView.dataSource = self
+			setupGestureRecognizers()
+			graphView.restoreData()
+		}
+	}
+	
+	private let userdefaults = NSUserDefaults.standardUserDefaults()
+	private struct Keys {
+		static let PropertyList = "GraphViewControllerPropertyList"
 	}
 	
 	private func setupGestureRecognizers() {

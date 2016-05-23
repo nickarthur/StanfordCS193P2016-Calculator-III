@@ -9,7 +9,7 @@
 import Foundation
 class CalculatorBrain  {
 	
-	////////////////////////  Private methods and properties
+////////////////////////  public methods and properties
 
 	func setOperand(operand: Double) {
 		accumulator = operand
@@ -152,7 +152,7 @@ class CalculatorBrain  {
 	}
 	var numberFormatter: NSNumberFormatter?
 	
-	////////////////////////  Private methods and properties
+////////////////////////  Private methods and properties
 	
 	private var accumulator = 0.0
 	private var internalProgram : [AnyObject] = [0.0]
