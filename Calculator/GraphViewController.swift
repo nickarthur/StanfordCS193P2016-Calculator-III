@@ -8,25 +8,13 @@
 
 import UIKit
 
-protocol hasCalculatorBrain: class {
-	var brainProgram: CalculatorBrain.PropertyList? { get set }
-}
 
 protocol GraphViewDataSource: class {
 	func graphView(valueYforX x: CGFloat) -> CGFloat
 }
 
-
-class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSource
+class GraphViewController: UIViewController, GraphViewDataSource
 {
-	weak var brainProgram: CalculatorBrain.PropertyList?
-	{	get {	return userdefaults.objectForKey(Keys.PropertyList) ?? []	}
-		set {
-			userdefaults.setObject(newValue, forKey: Keys.PropertyList)
-			brain.program = newValue ?? []
-		}
-	}
-
 	func graphView(valueYforX x: CGFloat) -> CGFloat
 	{	brain.variableValues["M"] = Double(x)
 		return CGFloat(brain.result)
@@ -39,17 +27,17 @@ class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSo
 	override func viewDidLoad()
 	{	super.viewDidLoad()
 		brain.numberFormatter = thisAppStandardNumberFormatter()
-		if brainProgram != nil {
-			brain.program = brainProgram!
-		}
+		brain.program = userdefaults.objectForKey(Keys.PropertyList_GVC) ?? []
 		
-		navigationItem.title = brainProgram != nil ? brain.description : "Graph of Calculator Function"
+		navigationItem.title = brain.description
 		navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
 		navigationItem.leftItemsSupplementBackButton = true
 	}
 	
 	/////////////////////// - private methods and properties
+	private let userdefaults = NSUserDefaults.standardUserDefaults()
 	private var brain = CalculatorBrain()
+
 	@IBOutlet private weak var graphView: GraphView! {
 		didSet {
 			graphView.dataSource = self
@@ -57,12 +45,7 @@ class GraphViewController: UIViewController, hasCalculatorBrain, GraphViewDataSo
 			graphView.restoreData()
 		}
 	}
-	
-	private let userdefaults = NSUserDefaults.standardUserDefaults()
-	private struct Keys {
-		static let PropertyList = "GraphViewControllerPropertyList"
-	}
-	
+
 	private func setupGestureRecognizers() {
 		graphView.addGestureRecognizer(UIPinchGestureRecognizer(
 			target: graphView,

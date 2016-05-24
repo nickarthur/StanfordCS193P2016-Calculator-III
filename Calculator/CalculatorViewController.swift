@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CalculatorViewController: UIViewController
+class CalculatorViewController: UIViewController, UISplitViewControllerDelegate
 {
 // all methods and properties are private, except for
 // except for UIViewController methodds (override)
@@ -86,7 +86,7 @@ class CalculatorViewController: UIViewController
 			userIsInTheMiddleOfTyping = false
 			graphButton.enabled = !brain.isPartialResult
 			
-			userdefaults.setObject(brain.program, forKey: Keys.PropertyList)
+			userdefaults.setObject(brain.program, forKey: Keys.PropertyList_CVC)
 		}
 	}
 
@@ -98,9 +98,12 @@ class CalculatorViewController: UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		brain.numberFormatter = thisAppStandardNumberFormatter()
-		if let brainProgram = userdefaults.objectForKey(Keys.PropertyList) {
+		if let brainProgram = userdefaults.objectForKey(Keys.PropertyList_CVC) {
 			brain.program = brainProgram
 			displayValue = brain.result
+		}
+		if let splitVC = splitViewController {
+			splitVC.delegate = self
 		}
 	}
 	
@@ -109,17 +112,16 @@ class CalculatorViewController: UIViewController
 	}
 	
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
-	{	let destinationVC = segue.destinationViewController.contentViewController
-		if let hasCalculatorBrainVC = destinationVC as? hasCalculatorBrain {
-			hasCalculatorBrainVC.brainProgram = brain.program
-		}
+	{	userdefaults.setObject(brain.program, forKey: Keys.PropertyList_GVC)
 	}
 	
 	private var numberFormatter: NSNumberFormatter = thisAppStandardNumberFormatter()
-
 	private let userdefaults = NSUserDefaults.standardUserDefaults()
-	private struct Keys {
-		static let PropertyList = "CalculatorViewControllerPropertyList"
+	
+//	perform delegate responsibilities... Start up in masterViewController (this one)
+	func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool
+	{
+		return false
 	}
 }
 
@@ -127,7 +129,7 @@ func thisAppStandardNumberFormatter () -> NSNumberFormatter {
 	let numberFormatter = NSNumberFormatter()
 	numberFormatter.locale = NSLocale.currentLocale()
 	numberFormatter.numberStyle = .DecimalStyle
-	numberFormatter.notANumberSymbol = "Error..(NaN)"
+	numberFormatter.notANumberSymbol = "Error.."
 	numberFormatter.alwaysShowsDecimalSeparator = false
 	numberFormatter.maximumFractionDigits = 6
 	numberFormatter.minimumFractionDigits = 0
@@ -135,4 +137,8 @@ func thisAppStandardNumberFormatter () -> NSNumberFormatter {
 	return numberFormatter
 }
 
+struct Keys {
+	static let PropertyList_GVC = "GraphViewControllerPropertyList"
+	static let PropertyList_CVC = "CalculatorViewControllerPropertyList"
+}
 

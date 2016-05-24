@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		EA0D03A41CEF63FA003A6E3A /* AxesDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0D03A31CEF63FA003A6E3A /* AxesDrawer.swift */; };
-		EA0E802D1CEFC59F00E25638 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0E802C1CEFC59F00E25638 /* SplitViewController.swift */; };
 		EA4B09FA1CDE5488003C404F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4B09F91CDE5488003C404F /* AppDelegate.swift */; };
 		EA4B09FC1CDE5488003C404F /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4B09FB1CDE5488003C404F /* CalculatorViewController.swift */; };
 		EA4B09FF1CDE5488003C404F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA4B09FD1CDE5488003C404F /* Main.storyboard */; };
@@ -22,7 +21,6 @@
 
 /* Begin PBXFileReference section */
 		EA0D03A31CEF63FA003A6E3A /* AxesDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AxesDrawer.swift; sourceTree = "<group>"; };
-		EA0E802C1CEFC59F00E25638 /* SplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		EA4B09F61CDE5487003C404F /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA4B09F91CDE5488003C404F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EA4B09FB1CDE5488003C404F /* CalculatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
@@ -50,7 +48,6 @@
 		EA0E802B1CEF670600E25638 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				EA0E802C1CEFC59F00E25638 /* SplitViewController.swift */,
 				EA4B09FB1CDE5488003C404F /* CalculatorViewController.swift */,
 				EA4E5CD21CEF1F510091AB15 /* GraphViewController.swift */,
 			);
@@ -195,7 +192,6 @@
 				EA0D03A41CEF63FA003A6E3A /* AxesDrawer.swift in Sources */,
 				EAA3B6CA1CEA698200F8103C /* extension.swift in Sources */,
 				EA4E5CD71CEF2C260091AB15 /* GraphView.swift in Sources */,
-				EA0E802D1CEFC59F00E25638 /* SplitViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

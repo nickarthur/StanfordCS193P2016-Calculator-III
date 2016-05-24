@@ -11,9 +11,9 @@ import UIKit
 class GraphView: UIView
 {
 	@IBInspectable var scale: CGFloat = 100 { didSet { setNeedsDisplay() }}
-	@IBInspectable var origin: CGPoint! { didSet { setNeedsDisplay() }}
-	@IBInspectable var color: UIColor = UIColor.blueColor() { didSet { setNeedsDisplay() }}
-	@IBInspectable var axesColor: UIColor = UIColor.blackColor() { didSet { setNeedsDisplay() }}
+	@IBInspectable var origin: CGPoint! 	{ didSet { setNeedsDisplay() }}
+	@IBInspectable var color: UIColor = UIColor.blueColor() 	{ didSet { setNeedsDisplay() }}
+	@IBInspectable var axesColor: UIColor = UIColor.blackColor(){ didSet { setNeedsDisplay() }}
 	@IBInspectable var lineWidth: CGFloat = 2.0 { didSet { setNeedsDisplay() }}
 	
 	weak var dataSource: GraphViewDataSource?
@@ -25,13 +25,12 @@ class GraphView: UIView
 	func zoom(recognizer: UIPinchGestureRecognizer) {
 		switch recognizer.state {
 		case .Began:
-			gesturing = true
+			localContentScaleFactor = gesturingContentScaleFactor
 		case .Changed:
 			scale *= recognizer.scale
 			recognizer.scale = 1.0
 		case .Ended:
-			scale *= recognizer.scale
-			gesturing = false
+			localContentScaleFactor = contentScaleFactor
 			storeData()
 		default: break
 		}
@@ -40,16 +39,13 @@ class GraphView: UIView
 	func pan(recognizer: UIPanGestureRecognizer) {
 		switch recognizer.state {
 		case .Began:
-			gesturing = true
+			localContentScaleFactor = gesturingContentScaleFactor
 		case .Changed:
 			let translation = recognizer.translationInView(self)
 			origin.offsetBy(dx: translation.x, dy: translation.y)
 			recognizer.setTranslation(CGPointZero, inView: self)
 		case .Ended:
-			let translation = recognizer.translationInView(self)
-			origin.offsetBy(dx: translation.x, dy: translation.y)
-			recognizer.setTranslation(CGPointZero, inView: self)
-			gesturing = false
+			localContentScaleFactor = contentScaleFactor
 			storeData()
 		default: break
 		}
@@ -71,7 +67,7 @@ class GraphView: UIView
 			boundsBeforeTransitionToSize = nil
 		}
 		if axesDrawer == nil {
-			axesDrawer = AxesDrawer(color: axesColor, contentScaleFactor: contentScaleFactor)
+			axesDrawer = AxesDrawer(color: axesColor, contentScaleFactor: localContentScaleFactor)
 		}
 		axesDrawer!.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
 		if let fx = dataSource?.graphView {
@@ -86,26 +82,26 @@ class GraphView: UIView
 	
 	func restoreData() {
 		if let dataToRestore = userdefaults.arrayForKey(Keys.ScaleAndOrigin) as? [CGFloat]
-		{	if dataToRestore.count == 3 {
+		where dataToRestore.count == 3
+		{
 			scale = dataToRestore[0]
 			origin = CGPoint(x: dataToRestore[1], y: dataToRestore[2])
-			}
 		}
 	}
 
 	///////////////////////////  private methods and properties
 	// for performance, use low contentScaleFactor when 'gesturing'
 	private var gesturingContentScaleFactor: CGFloat = 0.5
-	private var gesturing: Bool = false
+	private var localContentScaleFactor: CGFloat!
+
 	private var axesDrawer: AxesDrawer?
 	
 	private func drawMathFunction(fx: (CGFloat) -> CGFloat)
-	{	let scaleFactor = !gesturing ? self.contentScaleFactor : gesturingContentScaleFactor
-		
+	{
 		let maxY = bounds.maxY + bounds.height * 0.2
 		let minY = bounds.minY - bounds.height * 0.2
-		let minX = Int(bounds.minX * scaleFactor)
-		let maxX = Int(bounds.maxX * scaleFactor)
+		let minX = Int(bounds.minX * localContentScaleFactor)
+		let maxX = Int(bounds.maxX * localContentScaleFactor)
 		
 		func isValidTargetPointFor(x: CGFloat) -> CGPoint? {
 			let cartesianY = fx((x - origin.x) / scale)
@@ -119,11 +115,10 @@ class GraphView: UIView
 		var path: UIBezierPath?
 		for pixelX in minX...maxX
 		{
-			let x = CGFloat(pixelX) / scaleFactor
+			let x = CGFloat(pixelX) / localContentScaleFactor
 			if let targetPoint = isValidTargetPointFor(x) {
-				if path != nil {
-					path!.addLineToPoint(targetPoint)
-				} else {
+				path?.addLineToPoint(targetPoint)
+				if path == nil {
 					path = UIBezierPath()
 					path!.moveToPoint(targetPoint)
 				}
@@ -142,4 +137,17 @@ class GraphView: UIView
 		static let ScaleAndOrigin = "GraphViewScaleAndOrigin"
 	}
 	
+	deinit {
+		print("deinit graphView")
+	}
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		localContentScaleFactor = contentScaleFactor
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		localContentScaleFactor = contentScaleFactor
+	}
 }

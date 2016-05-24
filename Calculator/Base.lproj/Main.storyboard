@@ -488,7 +488,7 @@
         <!--Split View Controller-->
         <scene sceneID="uoh-I4-FPW">
             <objects>
-                <splitViewController id="SIg-h6-3ML" customClass="SplitViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController id="SIg-h6-3ML" sceneMemberID="viewController">
                     <connections>
                         <segue destination="9eV-9K-BoT" kind="relationship" relationship="masterViewController" id="zSq-d8-Qvu"/>
                         <segue destination="quN-Ne-zSo" kind="relationship" relationship="detailViewController" id="PDk-Go-q6e"/>
@@ -521,6 +521,6 @@
         <image name="graph@22" width="32" height="26"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="6V8-WY-YdS"/>
+        <segue reference="PDk-Go-q6e"/>
     </inferredMetricsTieBreakers>
 </document>

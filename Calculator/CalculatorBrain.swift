@@ -170,7 +170,7 @@ class CalculatorBrain  {
 		"cos"	: Operation.UnaryOperation(.Prefix("cos"), cos),
 		"tan"	: Operation.UnaryOperation(.Prefix("tan"), tan),
 		"±"		: Operation.UnaryOperation(.Prefix("-")) { -1 * $0 },
-		"Rand"	: Operation.Formula(drand48),
+		"Ran"	: Operation.Formula(drand48),
 		"π"		: Operation.Constant(M_PI),
 		"e"		: Operation.Constant(M_E),
 		"="		: Operation.Equals
